@@ -48,7 +48,7 @@ class Serverline {
         this._rl = readline.createInterface({
             input: process.stdin,
             output: process.stdout,
-            completer: this.__completer,
+            completer: (...args) => this.__completer(...args),
             prompt: slOptions.prompt
         });
         if (withWarn && !this._rl.terminal) {
