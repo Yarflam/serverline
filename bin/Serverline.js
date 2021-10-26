@@ -81,7 +81,10 @@ class Serverline {
             if (!this._stdoutMuted && this._rl.history && this._rl.terminal) {
                 this._rl.history.push(line);
             }
-            if (this._hidePrompt) process.stdout.write('\x1b[A\x1b[K');
+            if (this._hidePrompt) {
+                this._rl.output.moveCursor(0, -1);
+                this._rl.output.clearScreenDown();
+            }
             this._myEmitter.emit('line', line);
             if (this._rl.terminal) {
                 this._rl.prompt();
