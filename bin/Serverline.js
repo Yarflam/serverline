@@ -17,6 +17,7 @@ class Serverline {
         /* Data */
         this._stdoutMuted = false;
         this._myPrompt = PROMPT_DEFAULT;
+        this._hidePrompt = false;
         this._completions = [];
         this._fixSIGINTonQuestion = false;
     }
@@ -80,6 +81,7 @@ class Serverline {
             if (!this._stdoutMuted && this._rl.history && this._rl.terminal) {
                 this._rl.history.push(line);
             }
+            if (this._hidePrompt) process.stdout.write('\x1b[A\x1b[K');
             this._myEmitter.emit('line', line);
             if (this._rl.terminal) {
                 this._rl.prompt();
@@ -167,8 +169,9 @@ class Serverline {
      *  SETTERS
      */
 
-    setPrompt(strPrompt) {
+    setPrompt(strPrompt, hidePrompt = false) {
         this._myPrompt = strPrompt;
+        this._hidePrompt = hidePrompt;
         this._rl.setPrompt(this._myPrompt);
         return this._myPrompt;
     }

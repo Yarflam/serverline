@@ -208,6 +208,7 @@ myRL.question('What is your favorite food? ', answer => {
 ### Serverline.setPrompt(strPrompt)
 
 -   `strPrompt` `String`: Sets the prompt that will be written to output
+-   `hidePrompt` `Boolean`: Hide prompt after entry is sent (optional)
 
 ### Serverline.isMuted()
 
