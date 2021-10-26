@@ -1,9 +1,9 @@
 # serverline
 
-  [![NPM Version][npm-image]][npm-url]
-  [![Node Version][node-image]][npm-url]
-  [![NPM Downloads][downloads-image]][downloads-url]
-  [![Linux Build][travis-image]][travis-url]
+[![NPM Version][npm-image]][npm-url]
+[![Node Version][node-image]][npm-url]
+[![NPM Downloads][downloads-image]][downloads-url]
+[![Linux Build][travis-image]][travis-url]
 
 Better prompt interface when a new line is added when input is active
 
@@ -17,24 +17,23 @@ Better prompt interface when a new line is added when input is active
 
 ## Features :
 
-- Readline always available ;
-- Support for [debug](https://www.npmjs.com/package/debug) module with `myRL._debugModuleSupport(require('debug'))` ;
-- Commands history ;
-- Autocompletition ;
-- No split between input & output ;
-- Password mode to hide input (try 'pwd' command), [more effect here](https://stackoverflow.com/a/24037546/2226755) ;
-- You can eval command or javascript function like browser.
+-   Readline always available ;
+-   Support for [debug](https://www.npmjs.com/package/debug) module with `myRL._debugModuleSupport(require('debug'))` ;
+-   Commands history ;
+-   Autocompletition ;
+-   No split between input & output ;
+-   Password mode to hide input (try 'pwd' command), [more effect here](https://stackoverflow.com/a/24037546/2226755) ;
+-   You can eval command or javascript function like browser.
 
 ### Screenshot :
 
 [![demo with debug][1]][1]
 
-  [1]: https://i.imgur.com/5AMGsb9.gif
+[1]: https://i.imgur.com/5AMGsb9.gif
 
 #### See more :
 
- - [Demo with `console.log`](https://i.imgur.com/C7OQj5Y.gif)
-
+-   [Demo with `console.log`](https://i.imgur.com/C7OQj5Y.gif)
 
 ## Quick start
 
@@ -49,60 +48,65 @@ npm install serverline
 ### Example `/server/bin/index.js`:
 
 ```js
-process.stdout.write('\x1Bc')
+process.stdout.write('\x1Bc');
 
-const myRL = require('serverline')
+const myRL = require('serverline');
 
-myRL.init()
-myRL.setCompletion(['help', 'command1', 'command2', 'login', 'check', 'ping'])
+myRL.init();
+myRL.setCompletion(['help', 'command1', 'command2', 'login', 'check', 'ping']);
 
-myRL.setPrompt('> ')
+myRL.setPrompt('> ');
 
 myRL.on('line', function(line) {
-  console.log('cmd:', line)
-  switch (line) {
-    case 'help':
-      console.log('help: To get this message.')
-      break
-    case 'pwd':
-      console.log('toggle muted', !myRL.isMuted())
-      myRL.setMuted(!myRL.isMuted(), '> [hidden]')
-      return true
-    case 'secret':
-      return myRL.secret('secret:', function() {
-        console.log(';)')
-      })
-  }
+    console.log('cmd:', line);
+    switch (line) {
+        case 'help':
+            console.log('help: To get this message.');
+            break;
+        case 'pwd':
+            console.log('toggle muted', !myRL.isMuted());
+            myRL.setMuted(!myRL.isMuted(), '> [hidden]');
+            return true;
+        case 'secret':
+            return myRL.secret('secret:', function() {
+                console.log(';)');
+            });
+    }
 
-  if (myRL.isMuted())
-    myRL.setMuted(false)
-})
+    if (myRL.isMuted()) myRL.setMuted(false);
+});
 
 myRL.on('SIGINT', function(rl) {
-  rl.question('Confirm exit: ', (answer) => answer.match(/^y(es)?$/i) ? process.exit(0) : rl.output.write('\x1B[1K> '))
-})
+    rl.question('Confirm exit: ', answer =>
+        answer.match(/^y(es)?$/i)
+            ? process.exit(0)
+            : rl.output.write('\x1B[1K> ')
+    );
+});
 
 function displayFakeLog() {
-  let i = 0
-  setInterval(function() {
-    const num = () => Math.floor(Math.random() * 255) + 1
-    i++
-    console.log(i + ' ' + num() + '.' + num() + '.' + num() + ' user connected.')
-  }, 700)
+    let i = 0;
+    setInterval(function() {
+        const num = () => Math.floor(Math.random() * 255) + 1;
+        i++;
+        console.log(
+            i + ' ' + num() + '.' + num() + '.' + num() + ' user connected.'
+        );
+    }, 700);
 }
-displayFakeLog()
+displayFakeLog();
 ```
 
 ## Eval javascript command (like browser console) :
 
 ```js
 myRL.on('line', function(line) {
-  try {
-    console.log(eval(line))
-  } catch (e) {
-    console.error(e)
-  }
-})
+    try {
+        console.log(eval(line));
+    } catch (e) {
+        console.error(e);
+    }
+});
 ```
 
 ## Looking for old support ?
@@ -114,41 +118,40 @@ myRL.on('line', function(line) {
 ### debug
 
 ```js
-process.env.DEBUG = '*'
-const debug = require('debug')('server::info')
+process.env.DEBUG = '*';
+const debug = require('debug')('server::info');
 
-const myRL = require('serverline')
+const myRL = require('serverline');
 
-myRL.init()
-myRL._debugModuleSupport(require('debug'))
+myRL.init();
+myRL._debugModuleSupport(require('debug'));
 
-myRL.setPrompt('> ')
-
+myRL.setPrompt('> ');
 
 function displayFakeLog() {
-  let i = 0
-  setInterval(function() {
-    const num = () => Math.floor(Math.random() * 255) + 1
-    i++
-    debug(i + ' ' + num() + '.' + num() + '.' + num() + ' user connected.')
-  }, 700)
+    let i = 0;
+    setInterval(function() {
+        const num = () => Math.floor(Math.random() * 255) + 1;
+        i++;
+        debug(i + ' ' + num() + '.' + num() + '.' + num() + ' user connected.');
+    }, 700);
 }
 
-displayFakeLog()
+displayFakeLog();
 ```
 
 ## API
 
 ### Serverline.init(options)
 
-  - `options` (`Object` \| `String` if is String the value will be set to `options.prompt`):
-      - `prompt` (`String`, default: `'> '`): Set the prompt that will be written to output.
-      - `ignoreErrors` (`Boolean`, default: `true`): Ignore errors when writing to the underlying streams.
-        By default `Console` instance is on silent mode, it will catch error without print anything (**in dev mode, set to `false`**). 
-      - `colorMode` (`Boolean` \| `String`, default: `'auto'`): Set color support for the `Console` instance,
+-   `options` (`Object` \| `String` if is String the value will be set to `options.prompt`):
+    -   `prompt` (`String`, default: `'> '`): Set the prompt that will be written to output.
+    -   `ignoreErrors` (`Boolean`, default: `true`): Ignore errors when writing to the underlying streams.
+        By default `Console` instance is on silent mode, it will catch error without print anything (**in dev mode, set to `false`**).
+    -   `colorMode` (`Boolean` \| `String`, default: `'auto'`): Set color support for the `Console` instance,
         enable color with `true` [Read more](console_new_console_options).
-      - `inspectOptions` `Object`: Specifies options that are passed along to [util.inspect()](util_util_inspect_object_options).
-      - `forceTerminalContext` (`Boolean`, default: `false`): Force node to use stdin like a real terminal.
+    -   `inspectOptions` `Object`: Specifies options that are passed along to [util.inspect()](util_util_inspect_object_options).
+    -   `forceTerminalContext` (`Boolean`, default: `false`): Force node to use stdin like a real terminal.
         This setting is usefull if you redirect the output (with `npm start > file.txt`, `npm start | tee file.txt`, child_process, ...).
 
 [console_new_console_options]: https://nodejs.org/api/console.html#console_new_console_options
@@ -157,126 +160,116 @@ displayFakeLog()
 Start serverline's readline.
 
 ```js
-const myRL = require('serverline')
+const myRL = require('serverline');
 
-myRL.init()
+myRL.init();
 ```
-
 
 ### Serverline.secret(query, callback)
 
- - `query` `String`: A statement or query to write to output, prepended to the prompt.
- - `callback` `Function`: A callback function that is invoked with the user's input in response to the query.
+-   `query` `String`: A statement or query to write to output, prepended to the prompt.
+-   `callback` `Function`: A callback function that is invoked with the user's input in response to the query.
 
 Display the query by writing it to the output, waits for user input to be provided on input and press `ENTER`, then invokes the callback function passing the provided input as the first argument.
 
 The input will be hidden with `[-=]` and `[=-]`.
 
 ```js
-myRL.init()
+myRL.init();
 
 myRL.secret('secret:', function() {
-  console.log(';)')
-})
+    console.log(';)');
+});
 // output :
 // secret:[-=]
 ```
 
-
 ### Serverline.question(query, callback)
 
- - `query` `String`: A statement or query to write to output, prepended to the prompt.
- - `callback` `Function`: A callback function that is invoked with the user's input in response to the query.
+-   `query` `String`: A statement or query to write to output, prepended to the prompt.
+-   `callback` `Function`: A callback function that is invoked with the user's input in response to the query.
 
 Display the query by writing it to the output, waits for user input to be provided on input and press `ENTER`, then invokes the callback function passing the provided input as the first argument.
 
 [Node doc](https://nodejs.org/api/readline.html#readline_rl_question_query_callback)
 
 ```js
-myRL.init()
+myRL.init();
 
-myRL.question('What is your favorite food? ', (answer) => {
-  console.log(`Oh, so your favorite food is ${answer}.`)
-})
+myRL.question('What is your favorite food? ', answer => {
+    console.log(`Oh, so your favorite food is ${answer}.`);
+});
 ```
-
 
 ### Serverline.getPrompt()
 
-  - Returns `String`: Gets the current prompt that is written to output
-
+-   Returns `String`: Gets the current prompt that is written to output
 
 ### Serverline.setPrompt(strPrompt)
 
-  - `strPrompt` `String`: Sets the prompt that will be written to output
-
+-   `strPrompt` `String`: Sets the prompt that will be written to output
 
 ### Serverline.isMuted()
 
-  - Returns `Boolean`: True if the input is hidden
-
+-   Returns `Boolean`: True if the input is hidden
 
 ### Serverline.setMuted(enabled, strPrompt)
 
-  - `enabled` `Boolean`: Enable/Disable
-  - `strPrompt` `String`: Sets the prompt that will be written to output
+-   `enabled` `Boolean`: Enable/Disable
+-   `strPrompt` `String`: Sets the prompt that will be written to output
 
 Enable hidden input:
+
 ```js
-console.log('toggle muted', !myRL.isMuted())
-myRL.setMuted(true, '> [hidden]')
+console.log('toggle muted', !myRL.isMuted());
+myRL.setMuted(true, '> [hidden]');
 // output :
 // > [hidden][-=]
 ```
 
 Disable hidden input:
-```js
-disable : myRL.setMuted(false)
-```
 
+```js
+disable: myRL.setMuted(false);
+```
 
 ### Serverline.setCompletion(obj)
 
-  - `obj` `Array[String]`: Strings/commands displayed in autocompletion.
+-   `obj` `Array[String]`: Strings/commands displayed in autocompletion.
 
 If you want use your own completion function use (see below an example): `myRL.on('completer', completerFunction)`.
 
 Example:
 
 ```js
-myRL.init()
+myRL.init();
 
-myRL.setCompletion(['help', 'command1', 'command2', 'login', 'check', 'ping'])
+myRL.setCompletion(['help', 'command1', 'command2', 'login', 'check', 'ping']);
 ```
-
 
 ### Serverline.getHistory()
 
-   - Returns `Array[String]`: List of commands
+-   Returns `Array[String]`: List of commands
 
 Get History.
 
-
 ### Serverline.setHistory(history)
 
-   - Returns `Array[String]`: List of commands
+-   Returns `Array[String]`: List of commands
 
 Rewrite history.
 
-
 ### Serverline.getCollection()
 
-   - Returns: An Object with `stdout` and `stderr` used by serverline.
+-   Returns: An Object with `stdout` and `stderr` used by serverline.
 
 Use `Serverline.getCollection().stdout.write('msg\n')` can be usefull if you don't want to use `console.log('msg')`. `Serverline.getCollection().stdout` is different of `process.stdout`. Prefere to use `Serverline.getCollection().stdout.write('msg\n')` instead `process.stdout.write('msg\n')` because if you use `process.stdout.write`, you will get some prompt displays bugs.
 
-
 ### Serverline.getRL()
 
-   - Returns: The [readline instance](https://nodejs.org/api/readline.html#readline_readline)
+-   Returns: The [readline instance](https://nodejs.org/api/readline.html#readline_readline)
 
 We recommand to use `Serverline.<function>()` function instead `Serverline.getRL().<function>()`.
-
 
 ### Serverline.close()
 
@@ -286,7 +279,6 @@ Calling `rl.close()` does not immediately stop other events (including `'line'`)
 
 [Node doc](https://nodejs.org/api/readline.html#readline_rl_close)
 
-
 ### Serverline.pause()
 
 Pause the `input` stream, allowing it to be resumed later if necessary.
@@ -295,32 +287,32 @@ Calling `.pause()` does not immediately pause other events (including `'line'`) 
 
 [Node doc](https://nodejs.org/api/readline.html#readline_rl_pause)
 
-
 ### Serverline.resume()
 
 Resume the input stream if it has been paused.
 
 [Node doc](https://nodejs.org/api/readline.html#readline_rl_resume)
 
-
 ### Serverline.on(eventName, listener)
 
-  - `eventName` (`String` \| `Symbol`): The name of the event
-  - `listener` `Function`: The callback function
+-   `eventName` (`String` \| `Symbol`): The name of the event
+-   `listener` `Function`: The callback function
 
 Adds the listener function to the end of the listeners array for the event named eventName. No checks are made to see if the listener has already been added. Multiple calls passing the same combination of eventName and listener will result in the listener being added, and called, multiple times. [Read more](https://nodejs.org/api/events.html#events_emitter_on_eventname_listener)
 
 **Serverline/Rewrited events :**
- - Event: 'line'
- - Event: 'SIGINT'
- - Event: 'completer'
+
+-   Event: 'line'
+-   Event: 'SIGINT'
+-   Event: 'completer'
 
 **Navtive Readline events :**
- - Event: 'close'
- - Event: 'pause'
- - Event: 'resume'
- - Event: 'SIGCONT'
- - Event: 'SIGTSTP'
+
+-   Event: 'close'
+-   Event: 'pause'
+-   Event: 'resume'
+-   Event: 'SIGCONT'
+-   Event: 'SIGTSTP'
 
 #### Event: 'line'
 
@@ -330,17 +322,16 @@ The listener function is called with a string containing the single line of rece
 
 ```js
 myRL.init({
-  prompt: '> '
-})
+    prompt: '> '
+});
 
 myRL.on('line', function(line) {
-  console.log('cmd:', line)
-  if (line == 'help') {
-    console.log('help: To get this message.')
-  }
-})
+    console.log('cmd:', line);
+    if (line == 'help') {
+        console.log('help: To get this message.');
+    }
+});
 ```
-
 
 #### Event: 'SIGINT'
 
@@ -350,65 +341,77 @@ The listener function is invoked without passing any arguments.
 
 ```js
 myRL.on('SIGINT', function(rl) {
-  rl.question('Confirm exit: ', (answer) => answer.match(/^y(es)?$/i) ? process.exit(0) : rl.output.write('\x1B[1K> '))
-})
+    rl.question('Confirm exit: ', answer =>
+        answer.match(/^y(es)?$/i)
+            ? process.exit(0)
+            : rl.output.write('\x1B[1K> ')
+    );
+});
 ```
 
 [Node doc](https://nodejs.org/api/readline.html#readline_event_sigint)
 
-
 #### Event: 'completer'
 
- - arg (Object = { line, hits})
-    - line `String`: current line
-    - hits `Array[String]`: all completion will be displayed
+-   arg (Object = { line, hits})
+    -   line `String`: current line
+    -   hits `Array[String]`: all completion will be displayed
 
 You can make a better completer with dynamic values :
 
 ```js
-process.stdout.write('\x1Bc')
-const myRL = require('serverline')
+process.stdout.write('\x1Bc');
+const myRL = require('serverline');
 
 myRL.init({
-  prompt: '> '
-})
+    prompt: '> '
+});
 
-myRL.setCompletion(['.backup', '.forceupdate', '.open', '.compare', '.rename', '.sandbox'])
+myRL.setCompletion([
+    '.backup',
+    '.forceupdate',
+    '.open',
+    '.compare',
+    '.rename',
+    '.sandbox'
+]);
 myRL.on('completer', function(arg) {
     if (arg.hits.length == 1) {
-        arg.line = arg.hits[0]
+        arg.line = arg.hits[0];
     }
 
-    arg.hits = completerId('.backup ', arg.line, arg.hits)
-    arg.hits = completerId('.forceupdate ', arg.line, arg.hits)
-    arg.hits = completerId('.open ', arg.line, arg.hits)
-    arg.hits = completerId('.compare ', arg.line, arg.hits)
-    arg.hits = completerId('.rename ', arg.line, arg.hits)
-    arg.hits = completerId('.sandbox ', arg.line, arg.hits)
-})
+    arg.hits = completerId('.backup ', arg.line, arg.hits);
+    arg.hits = completerId('.forceupdate ', arg.line, arg.hits);
+    arg.hits = completerId('.open ', arg.line, arg.hits);
+    arg.hits = completerId('.compare ', arg.line, arg.hits);
+    arg.hits = completerId('.rename ', arg.line, arg.hits);
+    arg.hits = completerId('.sandbox ', arg.line, arg.hits);
+});
 
-const user_id = [1, 2, 3, 4]
+const user_id = [1, 2, 3, 4];
 function completerId(cmd, line, hits, verify) {
-    var verify = (verify) ? verify : function(id, index) {
-        return true
-    }
+    var verify = verify
+        ? verify
+        : function(id, index) {
+              return true;
+          };
 
-    var t = [cmd]
+    var t = [cmd];
     if (line.indexOf(cmd) == 0) {
         user_id.forEach(function(id, index) {
             if (!verify(id, index)) {
-                return
+                return;
             }
-            t.push(cmd + id)
-        })
+            t.push(cmd + id);
+        });
         hits = t.filter(function(c) {
-            return c.indexOf(line) == 0
-        })
+            return c.indexOf(line) == 0;
+        });
         if (hits.length == 0) {
-            hits = t
+            hits = t;
         }
     }
-    return hits
+    return hits;
 }
 ```
 
@@ -429,8 +432,8 @@ Suggestion:
 
 ```js
 myRL.on('close', function(line) {
-  console.log('bye')
-})
+    console.log('bye');
+});
 ```
 
 #### Event: 'pause'
@@ -439,8 +442,8 @@ myRL.on('close', function(line) {
 
 ```js
 myRL.on('pause', function(line) {
-  console.log('pause')
-})
+    console.log('pause');
+});
 ```
 
 #### Event: 'resume'
@@ -449,8 +452,8 @@ myRL.on('pause', function(line) {
 
 ```js
 myRL.on('resume', function(line) {
-  console.log('resume')
-})
+    console.log('resume');
+});
 ```
 
 #### Event: 'SIGCONT'
